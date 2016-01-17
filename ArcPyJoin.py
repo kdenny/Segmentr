@@ -1,15 +1,15 @@
 __author__ = 'kdenny'
 
-def joinTracts(shploc,segloc,states,segments):
-    ## Title: Census Bureau American Community Survey (ACS) API Automated Query Script
-    ## Written By: Kevin Denny, Deloitte
-    ## Support: kdenny@deloitte.com
-    ##
-    ## Description: Given a .csv file containing a list of names and table titles of ACS data fields, this script automatically queries the Census Bureau's API
-    ## and populates data files for the provided data fields across every Census tract in the U.S. This script requires an API key from the Census Bureau and
-    ## the Census Python package (available at https://pypi.python.org/pypi/census)
+def joinTracts(shploc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentation\Dependencies\Shapefiles", segloc, states, segments):
+    """
+     Title: Census Bureau American Community Survey (ACS) API Automated Query Script
+     Written By: Kevin Denny, Deloitte
+     Support: kdenny@deloitte.com
 
-    ######################################################################################################################################################
+     Description: Given a .csv file containing a list of names and table titles of ACS data fields, this script automatically queries the Census Bureau's API
+     and populates data files for the provided data fields across every Census tract in the U.S. This script requires an API key from the Census Bureau and
+     the Census Python package (available at https://pypi.python.org/pypi/census)
+    """
 
     import arcpy
     import csv
@@ -17,14 +17,12 @@ def joinTracts(shploc,segloc,states,segments):
     from datetime import datetime
     print ("Modules imported")
 
-
     for state in states:
-
-        ifile = shploc + "tl_2015_{0}_tract.shp".format(state)
-        ofile = shploc + state + "_TractsWData.shp"
+        ifile = os.path.join(shploc, "tl_2015_{0}_tract.shp".format(state))
+        ofile = os.path.join(shploc, "{0}_TractsWData.shp".format(state))
 
         # cfile = csvloc + state + "DataFields_Result.csv"
-        sfile = segloc + state + "_Segments.csv"
+        sfile = os.path.join(segloc, state + "_Segments.csv")
 
         fieldName = "GeoStr"
         fieldName2 = "Segment"
@@ -45,16 +43,15 @@ def joinTracts(shploc,segloc,states,segments):
                 arcpy.AddField_management(ofile, fn, "DOUBLE", "", "", fieldLength)
             arcpy.AddField_management(ofile, fieldName2, "TEXT", "", "", fieldLength)
 
-        # expression = "GetGeoString(!GEOID!)"
-        # codeblock = """
-        #     def GetGeoString(geoid):
-        #         gstring = str(geoid)
-        #         return gstring"""
+##        expression = "GetGeoString(!GEOID!)"
+##        codeblock = """
+##                    def GetGeoString(geoid):
+##                        return str(geoid)
+##                    """
 
         arcpy.CalculateField_management(ofile, fieldName, "str(!GEOID!)", "PYTHON")
         print 'GEOID string field calculated for {0}'.format(state)
         # arcpy.CalculateField_management(ofile, fieldName, "GetGeoString(!GEOID!)", "PYTHON_9.3", codeblock)
-
 
         fields = []
         for m in segments:
@@ -71,7 +68,6 @@ def joinTracts(shploc,segloc,states,segments):
                 listr[str(row['GEOID'])] = li
 
         rowst = arcpy.UpdateCursor(ofile) #this is my feature layer
-
         for cu in rowst:
             gid = cu.getValue("GeoStr")
             gi = gid.replace("u","")
@@ -85,9 +81,3 @@ def joinTracts(shploc,segloc,states,segments):
                     cu.setValue(y, 0)
                     cu.setValue(fieldName2, "N/A")
             rowst.updateRow(cu)
-
-
-
-
-
-
