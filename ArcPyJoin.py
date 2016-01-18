@@ -21,7 +21,7 @@ def joinTracts(shploc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentatio
         ifile = os.path.join(shploc, "tl_2015_{0}_tract.shp".format(state))
         ofile = os.path.join(shploc, "{0}_TractsWData.shp".format(state))
 
-        # cfile = csvloc + state + "DataFields_Result.csv"
+##        cfile = csvloc + state + "DataFields_Result.csv"
         sfile = os.path.join(segloc, state + "_Segments.csv")
 
         fieldName = "GeoStr"
@@ -51,7 +51,7 @@ def joinTracts(shploc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentatio
 
         arcpy.CalculateField_management(ofile, fieldName, "str(!GEOID!)", "PYTHON")
         print 'GEOID string field calculated for {0}'.format(state)
-        # arcpy.CalculateField_management(ofile, fieldName, "GetGeoString(!GEOID!)", "PYTHON_9.3", codeblock)
+##        arcpy.CalculateField_management(ofile, fieldName, "GetGeoString(!GEOID!)", "PYTHON_9.3", codeblock)
 
         fields = []
         for m in segments:
@@ -67,10 +67,12 @@ def joinTracts(shploc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentatio
                     li[field] = row[field]
                 listr[str(row['GEOID'])] = li
 
+# *NOTE*: Kevin, can we change this to the arcpy.da.UpdateCursor,
+# which works a lot faster than the old-school UpdateCursor?
+
         rowst = arcpy.UpdateCursor(ofile) #this is my feature layer
         for cu in rowst:
-            gid = cu.getValue("GeoStr")
-            gi = gid.replace("u","")
+            gi = cu.getValue("GeoStr").replace("u","")
             if gi in listr:
                 seglist = listr[gi]
                 for s in segments:
@@ -81,3 +83,8 @@ def joinTracts(shploc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentatio
                     cu.setValue(y, 0)
                     cu.setValue(fieldName2, "N/A")
             rowst.updateRow(cu)
+
+# *NOTE*: Kevin, another throught is, it looks like all the code in this script
+# is written to modify the attribute table of a shapefile. Can we use an
+# open-source alternative such as pyshp, shapefile, or shapely rathan than arcpy
+# to accomplish the same thing?

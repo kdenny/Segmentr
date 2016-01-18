@@ -1,14 +1,35 @@
 __author__ = 'kdenny'
 
+#-------------------------------------------------------------------------------
+# Name:        Census Bureau American Community Survey (ACS) API Automated Query
+
+# Purpose:     Given a .csv file containing a list of names and table titles of
+#              ACS data fields, this script automatically queries the Census
+#              Bureau's API and populates data files for the provided data
+#              fields across every Census tract in the U.S. This script requires
+#              an API key from the Census Bureau and the Census Python package
+#              (available at https://pypi.python.org/pypi/census)
+#
+# Author:      Kevin Denny, Deloitte
+# Contact:     kdenny@deloitte.com
+# Created:     01/15/2016
+# Copyright:   Deloitte
+
+#-------------------------------------------------------------------------------
+
+
 def getACS_base(outLoc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentation\Dependencies\Params", inStates):
     """
-     Title: Census Bureau American Community Survey (ACS) API Automated Query Script
-     Written By: Kevin Denny, Deloitte
-     Support: kdenny@deloitte.com
+    Title: Census Bureau American Community Survey (ACS) API Automated Query Script
+    Written By: Kevin Denny, Deloitte
+    Support: kdenny@deloitte.com
 
-     Description: Given a .csv file containing a list of names and table titles of ACS data fields, this script automatically queries the Census Bureau's API
-     and populates data files for the provided data fields across every Census tract in the U.S. This script requires an API key from the Census Bureau and
-    ## the Census Python package (available at https://pypi.python.org/pypi/census)
+    Description: Given a .csv file containing a list of names and table titles
+    of ACS data fields, this script automatically queries the Census Bureau's
+    API and populates data files for the provided data fields across every
+    Census tract in the U.S. This script requires an API key from the Census
+    Bureau and the Census Python package.
+    (available at https://pypi.python.org/pypi/census)
     """
 
     from census import Census
@@ -35,8 +56,8 @@ def getACS_base(outLoc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentati
     datumNames = []
     statesCounties = []
 
-    ## print("Start")
-    ## print(datetime.now().time())
+##    print("Start")
+##    print(datetime.now().time())
 
     # Populate list of states and counties
     with open(fipsLoc, "r") as csvfile:
@@ -52,7 +73,7 @@ def getACS_base(outLoc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentati
                 tempAr.append(curCounty)
                 if tempAr not in statesCounties:
                     statesCounties.append(tempAr)
-    ## print(statesCounties)
+##    print(statesCounties)
 
     # Populate list of datum fields / datum names
     with open(dataLoc, "r") as csvfile2:
@@ -103,9 +124,9 @@ def getACS_base(outLoc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentati
                         allVars.append(aString)
                         l += 1
 
-                    ## print ("Done processing tracts for" + state + ", " + county)
-                    ## print allVars
-                    ## print (datetime.now().time())
+##                    print ("Done processing tracts for" + state + ", " + county)
+##                    print allVars
+##                    print (datetime.now().time())
 
                     tracts = []
 
@@ -113,7 +134,6 @@ def getACS_base(outLoc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentati
                     listOfVars = []
 
                     # Cleans up data results
-
                     for vark in allVars:
                         tempList = []
                         for s in vark:
@@ -146,10 +166,7 @@ def getACS_base(outLoc=r"\\ussltcher8002fs.dan.sltc.com\FASGeoSpatial\Segmentati
                     ## print texta
                     m.write(texta)
                     m.close()
-
             print ("ACS Data gathered for ") + str(ss)
+
         else:
             return
-
-
-
