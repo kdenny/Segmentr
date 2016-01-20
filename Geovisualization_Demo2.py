@@ -78,7 +78,8 @@ tree = ttk.Treeview(root)
 
 # Populate attributes for each row
 for i, record in enumerate(records):
-    tree.insert("", "end", "test{0}".format(i), text=record[0], values=record[1:])
+    tree.insert("", "end", "test{0}".format(i), text=record[0],
+                values=record[1:])
 
 # Configure table headers
 tree.configure(columns=header[1:])
@@ -92,7 +93,8 @@ for head in header[1:]:
 tree.grid(row=1, column=1, rowspan=1, sticky="NSEW")
 
 # Add attribute table label
-at_label = ttk.Label(root, text="***SHAPEFILE METADATA***\n"+metadata, background="#FFFFCC")
+at_label = ttk.Label(root, text="***SHAPEFILE METADATA***\n\n"+metadata,
+                     background="#FFFFCC")
 at_label.grid(row=0, column=1, columnspan=2, sticky="EW")
 
 # Add scrollbars to treeview
@@ -110,7 +112,8 @@ frame.grid(row=2, column=0, sticky="W")
 # Create zoom and pan buttons for canvas
 def zoom_in():
     for shape in shapes:
-        canvas.scale(shape, canvas_width/2.0, canvas_height/2.0, 1.0/0.75, 1.0/0.75)
+        canvas.scale(shape, canvas_width/2.0, canvas_height/2.0, 1.0/0.75,
+                     1.0/0.75)
 def zoom_out():
     for shape in shapes:
         canvas.scale(shape, canvas_height/2.0, canvas_width/2.0, 0.75, 0.75)
