@@ -40,7 +40,8 @@ for shaperecord in shaperecords:
 # Initialize root and canvas
 root = tk.Tk()
 canvas_width, canvas_height = 500, 400
-canvas = tk.Canvas(root, width=canvas_width, height=canvas_height)
+canvas = tk.Canvas(root, width=canvas_width, height=canvas_height,
+                   background="#FFFFFF")
 
 # Create a range of hex colors
 colors = ['0', '1', '2', '3', '4', '5', '6', '7',
@@ -54,6 +55,7 @@ ratio = ratio_x if ratio_x > ratio_y else ratio_y
 
 # Convert x,y coordinates to window coordinates
 canvas_shapes_window = []
+shapes = []
 for xy_list in canvas_shapes:
     canvas_shapes_window = []
     for val in xy_list:
@@ -66,6 +68,7 @@ for xy_list in canvas_shapes:
                               fill="#99FFCC",
                               outline="#000000",
                               width=0.1)
+    shapes.append(c)
 
 # Finalize canvas onto grid
 canvas.grid(row=0, column=0, rowspan=3, sticky="NSEW")
@@ -99,5 +102,44 @@ tree.configure(xscrollcommand=x_scrollbar.set)
 y_scrollbar = ttk.Scrollbar(root, orient='vertical', command=tree.yview)
 y_scrollbar.grid(row=1, column=2, sticky="NS")
 tree.configure(yscrollcommand=y_scrollbar.set)
+
+# Create frame for navigation buttons
+frame = ttk.Frame(root)
+frame.grid(row=2, column=0, sticky="W")
+
+# Create zoom and pan buttons for canvas
+def zoom_in():
+    for shape in shapes:
+        canvas.scale(shape, canvas_width/2.0, canvas_height/2.0, 1.0/0.75, 1.0/0.75)
+def zoom_out():
+    for shape in shapes:
+        canvas.scale(shape, canvas_height/2.0, canvas_width/2.0, 0.75, 0.75)
+def pan_left():
+    for shape in shapes:
+        canvas.move(shape, 50.0, 0.0)
+def pan_right():
+    for shape in shapes:
+        canvas.move(shape, -50.0, 0.0)
+def pan_up():
+    for shape in shapes:
+        canvas.move(shape, 0.0, 50.0)
+def pan_down():
+    for shape in shapes:
+        canvas.move(shape, 0.0, -50.0)
+
+zoom_in_button = ttk.Button(frame, text="Zoom In", command=zoom_in)
+zoom_out_button = ttk.Button(frame, text="Zoom Out", command=zoom_out)
+pan_up_button = ttk.Button(frame, text="Pan Up", command=pan_up)
+pan_down_button = ttk.Button(frame, text="Pan Down", command=pan_down)
+pan_left_button = ttk.Button(frame, text="Pan Left", command=pan_left)
+pan_right_button = ttk.Button(frame, text="Pan Right", command=pan_right)
+
+zoom_in_button.grid(row=0, column=1)
+zoom_out_button.grid(row=1, column=1)
+pan_up_button.grid(row=0, column=0)
+pan_down_button.grid(row=1, column=0)
+pan_left_button.grid(row=2, column=0)
+pan_right_button.grid(row=2, column=1)
+
 
 root.mainloop()
